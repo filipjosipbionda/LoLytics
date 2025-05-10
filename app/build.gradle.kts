@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.rma.lolytics"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rma.lolytics"

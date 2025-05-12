@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "278633694976",
+    "project_id": "lolytics-d8fbd",
+    "storage_bucket": "lolytics-d8fbd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278633694976:android:78d751719e01e2753d55e5",
+        "android_client_info": {
+          "package_name": "com.rma.lolytics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0bwY7bkxbEgXFb11jnLjHO38yg2TR2Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

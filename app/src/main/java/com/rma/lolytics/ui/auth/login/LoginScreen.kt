@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,8 +42,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.rma.lolytics.R
+import com.rma.lolytics.ui.shared.LoLyticsErrorDialog
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -83,35 +82,16 @@ internal fun LoginScreen(
             )
 
             if (showErrorDialog) {
-                Dialog(
+                LoLyticsErrorDialog(
                     onDismissRequest = {
                         showErrorDialog = false
+                    },
+                    onConfirmClick = {
+                        showErrorDialog = false
                         loginViewModel.setIdleState()
-                    }
-                ) {
-                    Card {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "${(screenState as LoginUiState.Error).message}"
-                            )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                TextButton(
-                                    onClick = {
-                                        showErrorDialog = false
-                                        loginViewModel.setIdleState()
-                                    }
-                                ) {
-                                    Text("Ok")
-                                }
-                            }
-                        }
-                    }
-                }
+                    },
+                    text = "${(screenState as LoginUiState.Error).message}"
+                )
             }
 
     }

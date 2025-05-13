@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rma.lolytics.ui.auth.login.LoginScreen
+import com.rma.lolytics.ui.auth.password.ResetPasswordScreen
 import com.rma.lolytics.ui.navigation.CoreGraph
 import com.rma.lolytics.ui.navigation.LoginGraph
 
@@ -42,14 +43,11 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
             }
         }
         composable(LoginGraph.ForgotPassword.route) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "Reset password screen"
-                )
-            }
+            ResetPasswordScreen(
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

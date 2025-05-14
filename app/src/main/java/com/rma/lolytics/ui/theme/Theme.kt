@@ -97,4 +97,3 @@ fun LoLyticsTheme(
     content = content
   )
 }
-

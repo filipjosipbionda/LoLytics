@@ -28,4 +28,18 @@ class AuthRepositoryImpl(
     override fun checkIfUserIsLogged(): Boolean {
         return firebaseAuth.currentUser != null
     }
+
+    override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            withContext(Dispatchers.IO) {
+                Tasks.await(
+                    firebaseAuth.sendPasswordResetEmail(email)
+                )
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 }

@@ -42,4 +42,21 @@ class AuthRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun register(email: String, password: String): Result<Unit> {
+        return try {
+            withContext(Dispatchers.IO) {
+                Tasks.await(
+                    firebaseAuth.createUserWithEmailAndPassword(
+                        email,
+                        password
+                    )
+                )
+                Result.success(Unit)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 }

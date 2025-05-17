@@ -8,8 +8,12 @@ object Splash
 sealed class LoginGraph(val route: String) {
     data object Root : LoginGraph("auth")
     data object Login : LoginGraph("login")
-    data object Register : LoginGraph("register")
-    data object ForgotPassword : LoginGraph("forgot")
+    data object Register : LoginGraph("register") {
+        const val TITLE = "Register"
+    }
+    data object ForgotPassword : LoginGraph("forgot") {
+        const val TITLE = "Reset password"
+    }
 }
 
 sealed class CoreGraph(val route: String) {

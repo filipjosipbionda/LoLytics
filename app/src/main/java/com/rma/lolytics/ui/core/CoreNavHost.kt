@@ -1,5 +1,6 @@
 package com.rma.lolytics.ui.core
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -21,6 +22,9 @@ fun NavGraphBuilder.coreGraph(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+                BackHandler {
+
+                }
                 Text(
                     text = "HomeScreen"
                 )

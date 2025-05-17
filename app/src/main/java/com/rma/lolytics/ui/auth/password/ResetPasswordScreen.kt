@@ -6,17 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,38 +26,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rma.lolytics.R
-import com.rma.lolytics.ui.auth.login.LoginUiState
+import com.rma.lolytics.ui.auth.login.model.AuthUiState
+import com.rma.lolytics.ui.shared.AppTopBar
 import com.rma.lolytics.ui.shared.LoLyticsErrorDialog
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ResetPasswordScreen(
+    title: String,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val resetPasswordViewModel = koinViewModel<ResetPasswordViewModel>()
-    val resetPasswordScreenState = resetPasswordViewModel.passwordResetUiState.collectAsState()
+    val resetPasswordScreenState by resetPasswordViewModel.passwordResetUiState.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Reset password",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = navigateBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                }
+            AppTopBar(
+                navigateBack = navigateBack,
+                title = title
             )
         }
     ) { paddingValues ->
@@ -71,8 +52,8 @@ internal fun ResetPasswordScreen(
             onSendResetPasswordEmail = { email ->
                 resetPasswordViewModel.sendPasswordResetEmail(email)
             },
-            screenState = resetPasswordScreenState.value,
-            onErrorDialogConfirmClick = {
+            screenState = resetPasswordScreenState,
+            onDismissDialog = {
                 resetPasswordViewModel.setIdleState()
             },
             modifier = modifier
@@ -85,15 +66,15 @@ internal fun ResetPasswordScreen(
 @Composable
 private fun ResetPasswordScreenContent(
     onSendResetPasswordEmail: (String) -> Unit,
-    onErrorDialogConfirmClick: () -> Unit,
-    screenState: LoginUiState<*>,
+    onDismissDialog: () -> Unit,
+    screenState: AuthUiState<*>,
     modifier: Modifier = Modifier
 ) {
-    var showErrorDialog = screenState is LoginUiState.Error
+    var showErrorDialog = screenState is AuthUiState.Error
     var text by rememberSaveable {
         mutableStateOf("")
     }
-    val showSuccessToast = screenState is LoginUiState.Success
+    val showSuccessToast = screenState is AuthUiState.Success
 
     if (
         showErrorDialog
@@ -101,12 +82,13 @@ private fun ResetPasswordScreenContent(
         LoLyticsErrorDialog(
             onConfirmClick = {
                 showErrorDialog = false
-                onErrorDialogConfirmClick()
+                onDismissDialog()
             },
             onDismissRequest = {
                 showErrorDialog = false
+                onDismissDialog()
             },
-            text = "${(screenState as LoginUiState.Error).message}"
+            text = "${(screenState as AuthUiState.Error).message}"
         )
     }
 
@@ -160,7 +142,7 @@ private fun ResetPasswordPreview() {
     ResetPasswordScreenContent(
         modifier = Modifier.fillMaxSize(),
         onSendResetPasswordEmail = {},
-        screenState = LoginUiState.Idle,
-        onErrorDialogConfirmClick = {}
+        screenState = AuthUiState.Idle,
+        onDismissDialog = {}
     )
 }

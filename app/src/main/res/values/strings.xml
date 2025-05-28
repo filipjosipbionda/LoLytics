@@ -14,4 +14,23 @@
     <string name="register_screen_button_text">Register</string>
     <string name="register_confirm_password">Confirm password</string>
     <string name="register_text">Enter your email and password to create an account.</string>
+    <string name="add_match_data_kills_placeholder">Kills</string>
+    <string name="add_match_data_deaths_placeholder">Deaths</string>
+    <string name="add_match_data_assists_placeholder">Assists</string>
+    <string name="add_match_data_cs_placeholder">CS</string>
+    <string name="add_match_data_gold_placeholder">Gold Earned</string>
+    <string name="add_match_data_duration_placeholder">Duration (min)</string>
+    <string name="add_match_data_victory_text">Victory</string>
+    <string name="add_match_data_top_bar_title">Add match</string>
+    <string name="add_match_data_role_placeholder">Role</string>
+    <string name="add_match_data_select_champion_text">Select Champion</string>
+    <string name="add_match_data_save_match_text">Save Match</string>
+    <string name="champion_picker_search_champion_text">Search champion</string>
+    <string name="add_match_data_date_picker_confirm_button">OK</string>
+    <string name="add_match_data_date_picker_cancel_button">Cancel</string>
+    <string name="home_screen_no_matches_button">No matches available. Please add match using (+) button</string>
+    <string name="home_screen_search_text">Enter champion\'s name</string>
+    <string name="home_screen_title">Home</string>
+    <string name="profile">Profile</string>
+    <string name="profile_picture_settings_uploading_image">Uploading image...</string>
 </resources>

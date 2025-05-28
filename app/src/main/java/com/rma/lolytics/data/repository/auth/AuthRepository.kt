@@ -1,4 +1,4 @@
-package com.rma.lolytics.data.repository
+package com.rma.lolytics.data.repository.auth
 
 interface AuthRepository {
     suspend fun login(
@@ -14,4 +14,6 @@ interface AuthRepository {
         email: String,
         password: String,
     ): Result<Unit>
+
+    suspend fun logout(): Result<Unit>
 }

@@ -20,11 +20,11 @@ internal fun AppNavHost() {
             SplashScreen(
                 onNavigateToHome = {
                     navController.popBackStack()
-                    navController.navigate(CoreGraph.Root.route)
+                    navController.navigate(CoreGraph.Home)
                 },
                 onNavigateToLogin = {
                     navController.popBackStack()
-                    navController.navigate(LoginGraph.Root.route)
+                    navController.navigate(LoginGraph.Root)
                 }
             )
         }

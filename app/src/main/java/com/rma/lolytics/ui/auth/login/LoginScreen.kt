@@ -125,7 +125,9 @@ private fun LoginScreenContent(
 
         Text(
             text = stringResource(R.string.login_enter_data_text),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                MaterialTheme.colorScheme.primary
+            ),
             modifier = Modifier.padding(vertical = 16.dp)
         )
 

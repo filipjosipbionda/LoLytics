@@ -2,7 +2,7 @@ package com.rma.lolytics.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.lolytics.data.repository.AuthRepository
+import com.rma.lolytics.data.repository.auth.AuthRepository
 import com.rma.lolytics.ui.auth.login.model.AuthUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

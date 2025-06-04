@@ -33,4 +33,9 @@
     <string name="home_screen_title">Home</string>
     <string name="profile">Profile</string>
     <string name="profile_picture_settings_uploading_image">Uploading image…</string>
+    <string name="delete_match_dialog">Delete match</string>
+    <string name="delete_match_dialog_text">Do you really want to delete this match? Once deleted, it can\'t be restored.</string>
+    <string name="delete_match_confirm_button_text">Delete</string>
+    <string name="delete_match_cancel_button_text">Cancel</string>
+    <string name="default_channel_id">default_channel_id</string>
 </resources>

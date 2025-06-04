@@ -27,11 +27,12 @@ class FirestoreRepositoryImpl(
                     val uid = firebaseAuth.currentUser?.uid
                         ?: throw IllegalStateException("User not logged in")
 
-                    firestore.collection("users")
-                        .document(uid)
-                        .collection("matches")
-                        .add(match.toFirestoreModel())
-                        .await()
+                   firestore.collection("users")
+                       .document(uid)
+                       .collection("matches")
+                       .document(match.id.toString())
+                       .set(match.toFirestoreModel())
+                       .await()
 
                     return@withContext Result.success(Unit)
                 } catch (e: Exception) {
@@ -92,6 +93,24 @@ class FirestoreRepositoryImpl(
             Result.success(downloadUrl)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteMatch(id: Long): Result<Long> = withContext(Dispatchers.IO) {
+        try {
+           val uuid = firebaseAuth.uid ?:
+           return@withContext Result.failure(IllegalStateException("User not logged in"))
+
+           firestore.collection("users")
+               .document(uuid)
+               .collection("matches")
+               .document(id.toString())
+               .delete()
+
+               return@withContext Result.success(id)
+
+        } catch (e: Exception) {
+            return@withContext Result.failure(e)
         }
     }
 }

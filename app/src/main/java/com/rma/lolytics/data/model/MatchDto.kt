@@ -1,6 +1,9 @@
 package com.rma.lolytics.data.model
 
+import kotlin.random.Random
+
 data class MatchDto(
+    val id: Long =  Random.nextLong(),
     val champion: String = "",
     val role: String = "",
     val kills: Int = 0,

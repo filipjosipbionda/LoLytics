@@ -1,8 +1,14 @@
 package com.rma.lolytics.ui.core.home
 
+import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +24,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonMenu
-import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -32,29 +37,38 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationCompat
 import coil3.compose.AsyncImage
 import com.rma.lolytics.R
 import com.rma.lolytics.ui.core.home.model.Match
 import com.rma.lolytics.ui.core.home.model.MatchListItem
 import com.rma.lolytics.ui.shared.ChampionPickerBottomSheet
+import com.rma.lolytics.ui.shared.LolyticsAlertDialog
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
     addMatch: () -> Unit,
@@ -64,56 +78,43 @@ internal fun HomeScreen(
     modifier: Modifier = Modifier,
     ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
-    var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
     val groupedItems by homeViewModel.matches.collectAsState()
     val champions by homeViewModel.champions.collectAsState()
     var showChampionSheet by rememberSaveable { mutableStateOf(false) }
     val selectedChampion by homeViewModel.selectedChampion.collectAsState()
     val profilePicture by homeViewModel.profilePictureUrl.collectAsState()
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+    var matchToDeleteId: Long? by remember {
+        mutableStateOf(null)
+    }
+    val isDeleted by homeViewModel.isDeleted.collectAsState()
+    val context = LocalContext.current
 
     BackHandler {
         onBackPress()
     }
 
+    RequestNotificationPermission()
+    LaunchedEffect(isDeleted) {
+        if (isDeleted) {
+            showNotification(
+                context = context,
+                title = "LoLytics",
+                message = "Your match history has been updated - match deleted.",
+            )
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButtonMenu(
-                expanded = fabMenuExpanded,
-                button = {
-                    FloatingActionButton(
-                        onClick = {
-                            fabMenuExpanded = !fabMenuExpanded
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = null
-                        )
-                    }
-                }
+            FloatingActionButton(
+                onClick = addMatch
             ) {
-                FloatingActionButtonMenuItem(
-                    onClick = addMatch,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null
-                        )
-                    },
-                    text = {}
-                )
-
-                FloatingActionButtonMenuItem(
-                    onClick = {
-                        showChampionSheet = true
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = null
-                        )
-                    },
-                    text = {}
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
                 )
             }
         },
@@ -126,6 +127,13 @@ internal fun HomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = { showChampionSheet = true }) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = null,
+                        )
+                    }
+
                     AsyncImage(
                         fallback = painterResource(R.drawable.placeholder_lolytics),
                         placeholder = painterResource(R.drawable.placeholder_lolytics),
@@ -178,6 +186,10 @@ internal fun HomeScreen(
                 HomeScreenContent(
                     groupedItems = groupedItems,
                     modifier = modifier.padding(paddingValues),
+                    onConfirmDelete = {
+                        showDeleteDialog = true
+                        matchToDeleteId = it
+                    }
                 )
             }
         }
@@ -197,16 +209,36 @@ internal fun HomeScreen(
         )
     }
 
+    if (showDeleteDialog) {
+        LolyticsAlertDialog(
+            title = stringResource(R.string.delete_match_dialog),
+            text = stringResource(R.string.delete_match_dialog_text),
+            confirmButtonText = stringResource(R.string.delete_match_confirm_button_text),
+            cancelButtonText = stringResource(R.string.delete_match_cancel_button_text),
+            onConfirmRequest = {
+                matchToDeleteId?.let {
+                    homeViewModel.deleteMatch(it)
+                }
+                showDeleteDialog = false
+            },
+            onDismissRequest = {
+                showDeleteDialog = false
+            }
+        )
+    }
 }
 
 @Composable
 private fun HomeScreenContent(
     groupedItems: List<MatchListItem>,
     modifier: Modifier = Modifier,
+    onConfirmDelete: (Long) -> Unit,
 ) {
+    val lazyColumnState = rememberLazyListState()
+
     LazyColumn(
         modifier = modifier,
-        state = rememberLazyListState()
+        state = lazyColumnState
     ) {
         groupedItems.forEach { item ->
             when (item) {
@@ -217,7 +249,12 @@ private fun HomeScreenContent(
                 }
                 is MatchListItem.MatchEntry -> {
                     item {
-                        MatchItem(match = item.match)
+                        MatchItem(
+                            match = item.match,
+                            delete = {
+                                onConfirmDelete(it)
+                            }
+                        )
                     }
                 }
             }
@@ -237,51 +274,113 @@ private fun HomeScreenContentPreview() {
     )
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
-private fun MatchItem(match: Match) {
-    ListItem(
-        modifier = Modifier
-            .fillMaxWidth(),
-        leadingContent = {
-            AsyncImage(
-                model = match.imageUrl,
-                contentDescription = match.champion,
+private fun MatchItem(
+    match: Match,
+    delete: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var pressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    var itemHeight by remember {
+        mutableStateOf(0.dp)
+    }
+
+
+    val density = LocalDensity.current
+
+        Card (
+            modifier = modifier
+                .onSizeChanged {
+                    itemHeight = with(density) {
+                        it.height.toDp()
+                    }
+                }
+        ) {
+            Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        },
-        headlineContent = {
-            Text(
-                text = match.champion,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-            )
-        },
-        supportingContent = {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    text = match.role.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "K/D/A: ${match.kills}/${match.deaths}/${match.assists}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "CS: ${match.cs}   •   Gold: ${match.goldEarned}",
-                    style = MaterialTheme.typography.bodySmall
+                    .fillMaxWidth()
+                    .pointerInput(true) {
+                        detectTapGestures(
+                            onLongPress = {
+                                isContextMenuVisible = true
+                                pressOffset = DpOffset(it.x.toDp(), it.y.toDp())
+                            }
+                        )
+                    }
+            ) {
+                ListItem(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    leadingContent = {
+                        AsyncImage(
+                            model = match.imageUrl,
+                            contentDescription = match.champion,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                        )
+                    },
+                    headlineContent = {
+                        Text(
+                            text = match.champion,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    },
+                    supportingContent = {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = match.role.name,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "K/D/A: ${match.kills}/${match.deaths}/${match.assists}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
+                                text = "CS: ${match.cs}   •   Gold: ${match.goldEarned}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                    trailingContent = {
+                        Text(
+                            text = if (match.isWin) "Victory" else "Defeat",
+                            color = if (match.isWin) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 )
             }
-        },
-        trailingContent = {
-            Text(
-                text = if (match.isWin) "Victory" else "Defeat",
-                color = if (match.isWin) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.labelMedium
-            )
+
+            DropdownMenu(
+                expanded = isContextMenuVisible,
+                onDismissRequest = {
+                    isContextMenuVisible = false
+                },
+                offset = pressOffset.copy(
+                    y = pressOffset.y - itemHeight
+                )
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "Delete"
+                        )
+                    },
+                    onClick = {
+                        delete(match.id)
+                        isContextMenuVisible = false
+                    }
+                )
+            }
         }
-    )
 }
 
 
@@ -306,4 +405,36 @@ internal fun DateHeader(
                 )
             )
         }
+}
+
+@SuppressLint("ServiceCast")
+fun showNotification(
+    context: Context,
+    title: String,
+    message: String,
+    ) {
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    val notification = NotificationCompat.Builder(context, "default_channel_id")
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setContentTitle(title)
+        .setContentText(message)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .build()
+
+    notificationManager.notify(1, notification)
+}
+
+@Composable
+fun RequestNotificationPermission() {
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { _ ->
+
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+    }
 }

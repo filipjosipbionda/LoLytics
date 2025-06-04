@@ -6,6 +6,7 @@ import com.rma.lolytics.ui.core.home.model.Role
 
 fun Match.toFirestoreModel(): MatchDto {
     return MatchDto(
+        id = this.id,
         champion = this.champion,
         role = this.role.name,
         kills = this.kills,
@@ -23,7 +24,7 @@ fun Match.toFirestoreModel(): MatchDto {
 fun MatchDto.toDomain(): Match {
     return Match(
         date = this.timestamp,
-        id = 0,
+        id = this.id,
         champion = this.champion,
         role = Role.valueOf(this.role),
         kills = this.kills,

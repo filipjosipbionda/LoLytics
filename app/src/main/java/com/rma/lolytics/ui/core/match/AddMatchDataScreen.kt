@@ -251,7 +251,6 @@ private fun AddMatchDataScreenContent(
             onClick = {
                 uiState.selectedChampion?.let {
                     val match = Match(
-                        id = 0,
                         champion = it.name,
                         role = uiState.selectedRole,
                         kills = uiState.kills.toIntOrNull() ?: 0,

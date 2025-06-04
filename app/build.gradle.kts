@@ -90,4 +90,6 @@ dependencies {
 
     implementation(libs.material3)
 
+    //Accompanist
+    implementation(libs.accompanist.permissions)
 }

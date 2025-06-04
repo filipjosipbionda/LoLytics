@@ -35,6 +35,9 @@ internal class HomeViewModel(
 
     private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
+    private val _isDeleted = MutableStateFlow(false)
+    val isDeleted = _isDeleted.asStateFlow()
+
 
     init {
         fetchChampions()
@@ -111,6 +114,19 @@ internal class HomeViewModel(
                         _matches.value = groupMatchesByDate(filteredMatches)
                     }
             }
+        }
+    }
+
+    fun deleteMatch(id: Long) {
+        viewModelScope.launch {
+            firestoreRepository
+                .deleteMatch(id)
+                .onSuccess {
+                   _isDeleted.value = true
+                }
+                .onFailure {
+                    _isDeleted.value = true
+                }
         }
     }
 }

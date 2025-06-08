@@ -11,33 +11,33 @@ import com.rma.lolytics.ui.navigation.CoreGraph
 import com.rma.lolytics.ui.navigation.LoginGraph
 
 fun NavGraphBuilder.authGraph(navController: NavHostController) {
-    navigation(
-        startDestination = LoginGraph.Login.route,
-        route = LoginGraph.Root.route
-    ) {
-        composable(LoginGraph.Login.route) {
+    navigation<LoginGraph.Root>(
+        startDestination = LoginGraph.Login
+    ){
+        composable<LoginGraph.Login> {
             LoginScreen(
                 onRegister = {
-                    navController.navigate(LoginGraph.Register.route)
+                    navController.navigate(LoginGraph.Register)
                 },
                 onForgotPassword = {
-                    navController.navigate(LoginGraph.ForgotPassword.route)
+                    navController.navigate(LoginGraph.ForgotPassword)
                 },
-                onLoginSuccess = { navController.navigate(CoreGraph.Root.route) }
+                onLoginSuccess = { navController.navigate(CoreGraph.Root) }
             )
         }
-        composable(LoginGraph.Register.route) {
+        composable<LoginGraph.Register>{
             RegisterScreen(
                 title = LoginGraph.Register.TITLE,
                 navigateBack = {
                     navController.popBackStack()
                 },
                 onRegistrationSuccess = {
-                    navController.navigate(CoreGraph.Root.route)
+                    navController.popBackStack()
+                    navController.navigate(CoreGraph.Root)
                 }
             )
         }
-        composable(LoginGraph.ForgotPassword.route) {
+        composable<LoginGraph.ForgotPassword> {
             ResetPasswordScreen(
                 title = LoginGraph.ForgotPassword.TITLE,
                 navigateBack = {

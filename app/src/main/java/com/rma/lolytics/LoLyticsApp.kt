@@ -16,3 +16,4 @@ class LoLyticsApp : Application() {
         }
     }
 }
+

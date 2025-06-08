@@ -69,6 +69,8 @@ dependencies {
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 
     //Koin
     implementation(libs.insert.koin.koin.androidx.compose)
@@ -76,4 +78,18 @@ dependencies {
     //Icons
     implementation(libs.androidx.material.icons.extended)
 
+    //Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.slf4j.android)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp) // Only available on Android/JVM.
+
+    implementation(libs.material3)
+
+    //Accompanist
+    implementation(libs.accompanist.permissions)
 }

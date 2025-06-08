@@ -1,4 +1,4 @@
-package com.rma.lolytics.data.repository
+package com.rma.lolytics.data.repository.auth
 
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
-    val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
 ): AuthRepository {
     override suspend fun login(
         email: String,
@@ -54,6 +54,16 @@ class AuthRepositoryImpl(
                 )
                 Result.success(Unit)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun logout(): Result<Unit> {
+        return try {
+            firebaseAuth.signOut()
+            Result.success(Unit)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

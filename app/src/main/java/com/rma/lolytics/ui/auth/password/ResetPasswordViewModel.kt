@@ -2,14 +2,14 @@ package com.rma.lolytics.ui.auth.password
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.lolytics.data.repository.AuthRepository
+import com.rma.lolytics.data.repository.auth.AuthRepository
 import com.rma.lolytics.ui.auth.login.model.AuthUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ResetPasswordViewModel(
-   private val authRepository: AuthRepository,
+    private val authRepository: AuthRepository,
 ): ViewModel() {
     private val _passwordResetUiState: MutableStateFlow<AuthUiState<*>> =
         MutableStateFlow(AuthUiState.Idle)

@@ -5,18 +5,44 @@ import kotlinx.serialization.Serializable
 @Serializable
 object Splash
 
-sealed class LoginGraph(val route: String) {
-    data object Root : LoginGraph("auth")
-    data object Login : LoginGraph("login")
-    data object Register : LoginGraph("register") {
+@Serializable
+sealed class LoginGraph {
+    abstract val route: String
+
+    @Serializable
+    data object Root : LoginGraph() {
+        override val route = "auth"
+    }
+
+    @Serializable
+    data object Login : LoginGraph() {
+        override val route = "login"
+    }
+
+    @Serializable
+    data object Register : LoginGraph() {
+        override val route = "register"
         const val TITLE = "Register"
     }
-    data object ForgotPassword : LoginGraph("forgot") {
+
+    @Serializable
+    data object ForgotPassword : LoginGraph() {
+        override val route = "forgot"
         const val TITLE = "Reset password"
     }
 }
 
-sealed class CoreGraph(val route: String) {
-    data object Root : CoreGraph("core")
-    data object Home: CoreGraph("home")
+@Serializable
+sealed class CoreGraph {
+    @Serializable
+    data object Root : CoreGraph()
+
+    @Serializable
+    data object Home : CoreGraph()
+
+    @Serializable
+    data object Champions : CoreGraph()
+
+    @Serializable
+    data class ProfileSettings(val profilePictureUrl: String?) : CoreGraph()
 }

@@ -16,4 +16,10 @@ interface FirestoreRepository {
     suspend fun updateProfilePicture(imageUri: Uri): Result<String>
 
     suspend fun deleteMatch(id: Long): Result<Long>
+
+    suspend fun updateUsername(username: String): Result<Unit>
+
+    suspend fun fetchUsername(): Result<String>
+
+    fun changePassword(password: String)
 }

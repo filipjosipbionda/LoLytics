@@ -11,7 +11,6 @@ data class ChampionListResponse(
 data class ChampionDto(
     val id: String,
     val name: String,
-    val title: String,
     val image: ChampionImageDto
 )
 

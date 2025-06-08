@@ -38,4 +38,18 @@
     <string name="delete_match_confirm_button_text">Delete</string>
     <string name="delete_match_cancel_button_text">Cancel</string>
     <string name="default_channel_id">default_channel_id</string>
+    <string name="profile_screen_username">Username</string>
+    <string name="profile_new_password">New password</string>
+    <string name="profile_change_password_title">Change password</string>
+    <string name="profile_screen_wins">Wins</string>
+    <string name="profile_screen_losses">Losses</string>
+    <string name="profile_screen_kills">Kills</string>
+    <string name="profile_screen_assists">Assists</string>
+    <string name="profile_screen_deaths">Deaths</string>
+    <string name="profile_screen_winrate">Winrate</string>
+    <string name="profile_screen_highest_winstreak">Highest Winstreak</string>
+    <string name="profile_screen_average_kda">Average KDA</string>
+    <string name="top_5_most_played_champs">Top 5 most played champs</string>
+    <string name="profile_screen_your_stats">Your Stats</string>
+    <string name="profile_details_change_username">Change username</string>
 </resources>

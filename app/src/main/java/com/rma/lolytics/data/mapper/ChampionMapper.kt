@@ -8,7 +8,6 @@ fun ChampionDto.toDomain(): Champion {
     return Champion(
         id = id,
         name = name,
-        title = title,
         imageUrl = this.getImageUrl()
     )
 }

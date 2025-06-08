@@ -40,8 +40,8 @@ internal class HomeViewModel(
 
 
     init {
-        fetchChampions()
         fetchMatchData()
+        fetchChampions()
         fetchProfilePicture()
     }
 

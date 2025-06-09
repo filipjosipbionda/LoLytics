@@ -334,18 +334,28 @@ private fun MatchItem(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "K/D/A: ${match.kills}/${match.deaths}/${match.assists}",
+                                text = stringResource(
+                                    R.string.home_screen_kda,
+                                    match.kills,
+                                    match.deaths,
+                                    match.assists
+                                ),
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = "CS: ${match.cs}   •   Gold: ${match.goldEarned}",
+                                text = stringResource(
+                                    R.string.home_screen_cs,
+                                    match.cs,
+                                    match.goldEarned
+                                ),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
                     },
                     trailingContent = {
                         Text(
-                            text = if (match.isWin) "Victory" else "Defeat",
+                            text = if (match.isWin) stringResource(R.string.victory) else
+                                stringResource(R.string.defeat),
                             color = if (match.isWin) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.labelMedium
                         )
@@ -365,7 +375,7 @@ private fun MatchItem(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = "Delete"
+                            text = stringResource(R.string.ddmenu_delete)
                         )
                     },
                     onClick = {

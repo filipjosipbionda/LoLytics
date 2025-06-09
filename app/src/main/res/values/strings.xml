@@ -52,4 +52,9 @@
     <string name="top_5_most_played_champs">Top 5 most played champs</string>
     <string name="profile_screen_your_stats">Your Stats</string>
     <string name="profile_details_change_username">Change username</string>
+    <string name="ddmenu_delete">Delete</string>
+    <string name="home_screen_kda">K/D/A: %1$s/%2$s/%3$s</string>
+    <string name="home_screen_cs">CS: %1$s   •   Gold: %2$s</string>
+    <string name="victory">Victory</string>
+    <string name="defeat">Defeat</string>
 </resources>
